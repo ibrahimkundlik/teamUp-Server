@@ -5,7 +5,6 @@ const userSchema = mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
-			trim: true,
 		},
 		email: {
 			type: String,
@@ -25,6 +24,13 @@ const userSchema = mongoose.Schema(
 		timestamps: true,
 	}
 );
+
+userSchema.methods.toJSON = function () {
+	const user = this;
+	const userObject = user.toObject();
+	delete userObject.password;
+	return userObject;
+};
 
 const User = mongoose.model("User", userSchema);
 
