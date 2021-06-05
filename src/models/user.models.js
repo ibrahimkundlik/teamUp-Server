@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
-
-const reqString = {
-	type: String,
-	required: true,
-};
+import { reqString } from "./team.schemas.js";
 
 const userSchema = mongoose.Schema(
 	{

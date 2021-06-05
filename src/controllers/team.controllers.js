@@ -3,8 +3,21 @@ import Team from "../models/team.models.js";
 
 export const getTeams = async (req, res) => {
 	try {
-		res.status(200).json({ team: "getTeams" });
-	} catch (error) {}
+		const { teams } = await User.findById(req.userId)
+			.populate({
+				path: "teams",
+				model: "teams",
+			})
+			.select("teams");
+
+		res.status(200).json({ teams });
+	} catch (error) {
+		res.status(500).json({
+			error: "/errors/teams",
+			message: "Something went wrong.",
+			codeMessage: error.message,
+		});
+	}
 };
 
 export const createTeam = async (req, res) => {
@@ -14,13 +27,15 @@ export const createTeam = async (req, res) => {
 			name,
 			members,
 		});
+
 		newTeam.members.map(async (member) => {
 			await User.findByIdAndUpdate(
-				member.memberId,
+				member._id,
 				{ $push: { teams: newTeam._id } },
 				{ upsert: true, new: true }
 			);
 		});
+
 		res.status(200).json({ team: newTeam });
 	} catch (error) {
 		res.status(500).json({

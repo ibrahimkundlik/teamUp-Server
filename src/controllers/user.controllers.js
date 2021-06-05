@@ -30,7 +30,7 @@ export const login = async (req, res) => {
 			},
 			process.env.JWT_SECRET,
 			{
-				expiresIn: "1h",
+				expiresIn: "10 days",
 			}
 		);
 		res.status(200).json({ user: checkUser, token });
@@ -91,7 +91,7 @@ export const signup = async (req, res) => {
 			},
 			process.env.JWT_SECRET,
 			{
-				expiresIn: "1h",
+				expiresIn: "10 days",
 			}
 		);
 		res.status(200).json({ user: newUser, token });
