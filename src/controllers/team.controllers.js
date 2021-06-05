@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import User from "../models/user.models.js";
 import Team from "../models/team.models.js";
 
 export const getTeams = async (req, res) => {
@@ -9,10 +9,17 @@ export const getTeams = async (req, res) => {
 
 export const createTeam = async (req, res) => {
 	try {
-		const { name, memberID } = req.body;
+		const { name, members } = req.body;
 		const newTeam = await Team.create({
 			name,
-			members: [mongoose.Types.ObjectId(memberID)],
+			members,
+		});
+		newTeam.members.map(async (member) => {
+			await User.findByIdAndUpdate(
+				member.memberId,
+				{ $push: { teams: newTeam._id } },
+				{ upsert: true, new: true }
+			);
 		});
 		res.status(200).json({ team: newTeam });
 	} catch (error) {
@@ -22,10 +29,4 @@ export const createTeam = async (req, res) => {
 			codeMessage: error.message,
 		});
 	}
-};
-
-export const updateTeam = async (req, res) => {
-	try {
-		res.status(200).json({ team: "updateTeam" });
-	} catch (error) {}
 };

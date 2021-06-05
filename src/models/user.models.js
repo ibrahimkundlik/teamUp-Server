@@ -1,30 +1,37 @@
 import mongoose from "mongoose";
 
+const reqString = {
+	type: String,
+	required: true,
+};
+
 const userSchema = mongoose.Schema(
 	{
-		name: {
-			type: String,
-			required: true,
-		},
+		name: reqString,
 		email: {
-			type: String,
-			required: true,
+			...reqString,
 			unique: true,
 			trim: true,
 			lowercase: true,
 		},
 		password: {
-			type: String,
-			required: true,
+			...reqString,
 			trim: true,
 			minLength: 8,
 		},
+		teams: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "teams",
+			},
+		],
 	},
 	{
 		timestamps: true,
 	}
 );
 
+//deleting password before sending the response
 userSchema.methods.toJSON = function () {
 	const user = this;
 	const userObject = user.toObject();
@@ -32,6 +39,6 @@ userSchema.methods.toJSON = function () {
 	return userObject;
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("users", userSchema);
 
 export default User;

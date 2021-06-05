@@ -1,13 +1,23 @@
 import mongoose from "mongoose";
 
+const reqString = {
+	type: String,
+	required: true,
+};
+
+const memberSchema = mongoose.Schema({
+	memberId: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+	},
+	level: reqString,
+});
+
 const teamSchema = mongoose.Schema(
 	{
-		name: {
-			type: String,
-			required: true,
-		},
+		name: reqString,
 		members: {
-			type: [mongoose.Schema.Types.ObjectId],
+			type: [memberSchema],
 			default: [],
 		},
 		tasks: {
@@ -20,6 +30,6 @@ const teamSchema = mongoose.Schema(
 	}
 );
 
-const Team = mongoose.model("Team", teamSchema);
+const Team = mongoose.model("teams", teamSchema);
 
 export default Team;
