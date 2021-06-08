@@ -1,23 +1,21 @@
 import mongoose from "mongoose";
-import {
-	reqString,
-	memberSchema,
-	taskSchema,
-	activitySchema,
-} from "./team.schemas.js";
+import { reqString, memberSchema, activitySchema } from "./utils.schemas.js";
 
 const teamSchema = mongoose.Schema(
 	{
 		name: reqString,
+		description: reqString,
 		members: {
 			type: [memberSchema],
 			required: true,
 			default: [],
 		},
-		tasks: {
-			type: [taskSchema],
-			default: [],
-		},
+		tasks: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "tasks",
+			},
+		],
 		activity: {
 			type: [activitySchema],
 			default: [],

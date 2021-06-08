@@ -3,12 +3,14 @@ import Team from "../models/team.models.js";
 
 export const getTeams = async (req, res) => {
 	try {
-		const { teams } = await User.findById(req.userId)
-			.populate({
-				path: "teams",
-				model: "teams",
-			})
-			.select("teams");
+		const { teams } = await User.findById(req.userId).populate({
+			path: "teams",
+			populate: {
+				path: "members._id",
+				model: "users",
+				select: "name",
+			},
+		});
 
 		res.status(200).json({ teams });
 	} catch (error) {
@@ -22,10 +24,11 @@ export const getTeams = async (req, res) => {
 
 export const createTeam = async (req, res) => {
 	try {
-		const { name, members } = req.body;
+		const { name, members, description } = req.body;
 		const newTeam = await Team.create({
 			name,
 			members,
+			description,
 		});
 
 		newTeam.members.map(async (member) => {

@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
 	} catch (error) {
 		res.status(403).json({
 			error: "/errors/auth",
-			message: "Authorization Error.",
+			message: "Authorization Error",
 			codeMessage: error.message,
 		});
 	}
