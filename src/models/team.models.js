@@ -3,8 +3,14 @@ import { reqString, memberSchema, activitySchema } from "./utils.schemas.js";
 
 const teamSchema = mongoose.Schema(
 	{
-		name: reqString,
-		description: reqString,
+		name: {
+			...reqString,
+			trim: true,
+		},
+		description: {
+			...reqString,
+			trim: true,
+		},
 		members: {
 			type: [memberSchema],
 			required: true,

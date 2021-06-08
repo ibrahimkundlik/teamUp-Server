@@ -25,13 +25,21 @@ export const getTeams = async (req, res) => {
 export const createTeam = async (req, res) => {
 	try {
 		const { name, members, description } = req.body;
-		const newTeam = await Team.create({
+		let newTeam = await Team.create({
 			name,
 			members,
 			description,
 		});
 
-		newTeam.members.map(async (member) => {
+		newTeam = await newTeam
+			.populate({
+				path: "members._id",
+				model: "users",
+				select: "name",
+			})
+			.execPopulate();
+
+		members.map(async (member) => {
 			await User.findByIdAndUpdate(
 				member._id,
 				{ $push: { teams: newTeam._id } },
