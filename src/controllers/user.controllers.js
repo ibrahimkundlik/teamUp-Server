@@ -46,7 +46,6 @@ export const login = async (req, res) => {
 export const signup = async (req, res) => {
 	try {
 		const { firstname, lastname, email, password, confirmPassword } = req.body;
-		const fullname = `${firstname.trim()} ${lastname.trim()}`;
 		//check email
 		if (!validator.isEmail(email)) {
 			return res.status(400).json({
@@ -77,6 +76,13 @@ export const signup = async (req, res) => {
 					"Password length is too small. Kindly re-enter your both passwords with minimum length of 8 characters.",
 			});
 		}
+
+		let fname = firstname.trim();
+		let lname = lastname.trim();
+		const fullname = `${
+			fname[0].toUpperCase() + fname.substring(1).toLowerCase()
+		} ${lname[0].toUpperCase() + lname.substring(1).toLowerCase()}`;
+
 		//start signup
 		const hashedPassword = await bcrypt.hash(password, 12);
 		const newUser = await User.create({
