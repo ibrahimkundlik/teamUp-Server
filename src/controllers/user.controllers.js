@@ -118,9 +118,16 @@ export const joinRequest = async (req, res) => {
 
 		await User.findByIdAndUpdate(
 			adminId,
-			{ $push: { requests: { userName, teamName, userId, teamId } } },
+			{ $addToSet: { joinRequests: { userName, teamName, userId, teamId } } },
 			{ new: true, runValidators: true }
 		);
+
+		await User.findByIdAndUpdate(
+			userId,
+			{ $addToSet: { sentRequests: teamId } },
+			{ new: true, runValidators: true }
+		);
+
 		res.status(200).json({ success: "Join request sent to admin." });
 	} catch (error) {
 		res.status(500).json({

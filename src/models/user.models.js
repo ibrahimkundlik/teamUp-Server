@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { reqString, requestSchema } from "./utils.schemas.js";
+import { reqString, joinRequestSchema } from "./utils.schemas.js";
 
 const userSchema = mongoose.Schema(
 	{
@@ -21,10 +21,16 @@ const userSchema = mongoose.Schema(
 				ref: "teams",
 			},
 		],
-		requests: {
-			type: [requestSchema],
+		joinRequests: {
+			type: [joinRequestSchema],
 			default: [],
 		},
+		sentRequests: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "teams",
+			},
+		],
 	},
 	{
 		timestamps: true,

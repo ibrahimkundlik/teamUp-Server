@@ -43,7 +43,7 @@ export const createTeam = async (req, res) => {
 			await User.findByIdAndUpdate(
 				member._id,
 				{ $push: { teams: newTeam._id } },
-				{ upsert: true, new: true }
+				{ new: true, runValidators: true }
 			);
 		});
 

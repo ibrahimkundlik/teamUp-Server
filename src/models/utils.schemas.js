@@ -27,7 +27,7 @@ export const memberSchema = mongoose.Schema({
 	level: reqString,
 });
 
-export const requestSchema = mongoose.Schema({
+export const joinRequestSchema = mongoose.Schema({
 	userName: reqString,
 	teamName: reqString,
 	userId: {
