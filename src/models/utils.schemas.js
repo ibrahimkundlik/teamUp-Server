@@ -27,6 +27,19 @@ export const memberSchema = mongoose.Schema({
 	level: reqString,
 });
 
+export const requestSchema = mongoose.Schema({
+	userName: reqString,
+	teamName: reqString,
+	userId: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+	},
+	teamId: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+	},
+});
+
 export const activitySchema = mongoose.Schema(
 	{
 		ownerId: {

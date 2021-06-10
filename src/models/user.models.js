@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { reqString } from "./utils.schemas.js";
+import { reqString, requestSchema } from "./utils.schemas.js";
 
 const userSchema = mongoose.Schema(
 	{
@@ -21,6 +21,10 @@ const userSchema = mongoose.Schema(
 				ref: "teams",
 			},
 		],
+		requests: {
+			type: [requestSchema],
+			default: [],
+		},
 	},
 	{
 		timestamps: true,

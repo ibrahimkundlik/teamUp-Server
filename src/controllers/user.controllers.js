@@ -109,3 +109,24 @@ export const signup = async (req, res) => {
 		});
 	}
 };
+
+export const joinRequest = async (req, res) => {
+	try {
+		const { userName, teamName, teamId } = req.body;
+		const userId = req.userId;
+		const adminId = req.params.id;
+
+		await User.findByIdAndUpdate(
+			adminId,
+			{ $push: { requests: { userName, teamName, userId, teamId } } },
+			{ new: true, runValidators: true }
+		);
+		res.status(200).json({ success: "Join request sent to admin." });
+	} catch (error) {
+		res.status(500).json({
+			error: "/errors/signup",
+			message: "Something went wrong.",
+			codeMessage: error.message,
+		});
+	}
+};
