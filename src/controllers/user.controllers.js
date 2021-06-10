@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import validator from "validator";
 import User from "../models/user.models.js";
+import Team from "../models/team.models.js";
 
 export const login = async (req, res) => {
 	try {
@@ -103,7 +104,7 @@ export const signup = async (req, res) => {
 		res.status(200).json({ user: newUser, token });
 	} catch (error) {
 		res.status(500).json({
-			error: "/errors/signup",
+			error: "/errors/request",
 			message: "Something went wrong.",
 			codeMessage: error.message,
 		});
@@ -116,22 +117,57 @@ export const joinRequest = async (req, res) => {
 		const userId = req.userId;
 		const adminId = req.params.id;
 
-		await User.findByIdAndUpdate(
+		const updatedAdmin = await User.findByIdAndUpdate(
 			adminId,
 			{ $addToSet: { joinRequests: { userName, teamName, userId, teamId } } },
 			{ new: true, runValidators: true }
 		);
 
-		await User.findByIdAndUpdate(
+		const updatedUser = await User.findByIdAndUpdate(
 			userId,
 			{ $addToSet: { sentRequests: teamId } },
 			{ new: true, runValidators: true }
 		);
 
-		res.status(200).json({ success: "Join request sent to admin." });
+		res.status(200).json({ user: updatedUser, admin: updatedAdmin });
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/signup",
+			message: "Something went wrong.",
+			codeMessage: error.message,
+		});
+	}
+};
+
+export const addMember = async (req, res) => {
+	try {
+		const { userId, teamId, requestId } = req.body;
+		const adminId = req.userId;
+
+		const updatedAdmin = await User.findByIdAndUpdate(
+			adminId,
+			{ $pull: { joinRequests: { _id: requestId } } },
+			{ new: true, runValidators: true }
+		);
+
+		const updatedUser = await User.findByIdAndUpdate(
+			userId,
+			{ $addToSet: { teams: teamId }, $pull: { sentRequests: teamId } },
+			{ new: true, runValidators: true }
+		);
+
+		const updatedTeam = await Team.findByIdAndUpdate(
+			teamId,
+			{ $addToSet: { members: { _id: userId, level: "Member" } } },
+			{ new: true, runValidators: true }
+		);
+
+		res
+			.status(200)
+			.json({ admin: updatedAdmin, user: updatedUser, team: updatedTeam });
+	} catch (error) {
+		res.status(500).json({
+			error: "/errors/add-member",
 			message: "Something went wrong.",
 			codeMessage: error.message,
 		});
