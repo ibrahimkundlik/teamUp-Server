@@ -56,3 +56,29 @@ export const createTeam = async (req, res) => {
 		});
 	}
 };
+
+export const searchTeam = async (req, res) => {
+	try {
+		const query = req.query.teamQuery.trim();
+
+		if (query.length === 0) {
+			return res.status(400).json({
+				error: "/errors/teams",
+				message:
+					"Kindly check your search query. The provided search query is empty.",
+			});
+		}
+
+		const result = await Team.find({
+			name: { $regex: query, $options: "i" },
+		}).select("name members");
+
+		res.status(200).json({ result });
+	} catch (error) {
+		res.status(500).json({
+			error: "/errors/teams",
+			message: "Something went wrong while searching teams.",
+			codeMessage: error.message,
+		});
+	}
+};
