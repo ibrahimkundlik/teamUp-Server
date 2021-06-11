@@ -25,8 +25,10 @@ export const getTeams = async (req, res) => {
 export const createTeam = async (req, res) => {
 	try {
 		const { name, members, description } = req.body;
+		const teamName = `${name[0].toUpperCase() + name.substring(1)}`;
+
 		let newTeam = await Team.create({
-			name,
+			name: teamName,
 			members,
 			description,
 		});
@@ -59,7 +61,7 @@ export const createTeam = async (req, res) => {
 
 export const searchTeam = async (req, res) => {
 	try {
-		const query = req.query.teamQuery.trim();
+		const query = req.query.searchQuery.trim();
 
 		if (query.length === 0) {
 			return res.status(400).json({

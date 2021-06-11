@@ -117,6 +117,8 @@ export const joinRequest = async (req, res) => {
 		const userId = req.userId;
 		const adminId = req.params.id;
 
+		//socket
+
 		const updatedAdmin = await User.findByIdAndUpdate(
 			adminId,
 			{ $addToSet: { joinRequests: { userName, teamName, userId, teamId } } },
@@ -143,6 +145,8 @@ export const addMember = async (req, res) => {
 	try {
 		const { userId, teamId, requestId } = req.body;
 		const adminId = req.userId;
+
+		//socket
 
 		const updatedAdmin = await User.findByIdAndUpdate(
 			adminId,
