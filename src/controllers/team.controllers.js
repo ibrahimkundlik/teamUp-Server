@@ -41,15 +41,13 @@ export const createTeam = async (req, res) => {
 			})
 			.execPopulate();
 
-		members.map(async (member) => {
-			await User.findByIdAndUpdate(
-				member._id,
-				{ $push: { teams: newTeam._id } },
-				{ new: true, runValidators: true }
-			);
-		});
+		const updatedUser = await User.findByIdAndUpdate(
+			members[0]._id,
+			{ $push: { teams: newTeam._id } },
+			{ new: true, runValidators: true }
+		);
 
-		res.status(200).json({ team: newTeam });
+		res.status(200).json({ team: newTeam, user: updatedUser });
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/teams",
