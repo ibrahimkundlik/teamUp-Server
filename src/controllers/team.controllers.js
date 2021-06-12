@@ -12,7 +12,9 @@ export const getTeams = async (req, res) => {
 			},
 		});
 
-		res.status(200).json({ teams });
+		const userTeams = teams.map((team) => team._id);
+
+		res.status(200).json({ teams, userTeams });
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/teams",
@@ -47,7 +49,7 @@ export const createTeam = async (req, res) => {
 			{ new: true, runValidators: true }
 		);
 
-		res.status(200).json({ team: newTeam, user: updatedUser });
+		res.status(200).json({ team: newTeam, userTeams: updatedUser.teams });
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/teams",
