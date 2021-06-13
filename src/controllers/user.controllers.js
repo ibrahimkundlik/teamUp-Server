@@ -131,7 +131,10 @@ export const joinRequest = async (req, res) => {
 			{ new: true, runValidators: true }
 		);
 
-		res.status(200).json({ user: updatedUser, admin: updatedAdmin });
+		res.status(200).json({
+			user: updatedUser.sentRequests,
+			admin: updatedAdmin.joinRequests,
+		});
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/signup",
@@ -143,7 +146,7 @@ export const joinRequest = async (req, res) => {
 
 export const addMember = async (req, res) => {
 	try {
-		const { userId, teamId, requestId } = req.body;
+		const { userId, teamId, requestId, type } = req.body;
 		const adminId = req.userId;
 
 		//socket
@@ -154,21 +157,38 @@ export const addMember = async (req, res) => {
 			{ new: true, runValidators: true }
 		);
 
-		const updatedUser = await User.findByIdAndUpdate(
-			userId,
-			{ $addToSet: { teams: teamId }, $pull: { sentRequests: teamId } },
-			{ new: true, runValidators: true }
-		);
+		if (type === "reject") {
+			const rejectUser = await User.findByIdAndUpdate(
+				userId,
+				{ $pull: { sentRequests: teamId } },
+				{ new: true, runValidators: true }
+			);
 
-		const updatedTeam = await Team.findByIdAndUpdate(
-			teamId,
-			{ $addToSet: { members: { _id: userId, level: "Member" } } },
-			{ new: true, runValidators: true }
-		);
+			return res.status(200).json({
+				admin: updatedAdmin.joinRequests,
+				user: rejectUser.sentRequests,
+			});
+		}
 
-		res
-			.status(200)
-			.json({ admin: updatedAdmin, user: updatedUser, team: updatedTeam });
+		if (type === "accept") {
+			const acceptUser = await User.findByIdAndUpdate(
+				userId,
+				{ $addToSet: { teams: teamId }, $pull: { sentRequests: teamId } },
+				{ new: true, runValidators: true }
+			);
+
+			const updatedTeam = await Team.findByIdAndUpdate(
+				teamId,
+				{ $addToSet: { members: { _id: userId, level: "Member" } } },
+				{ new: true, runValidators: true }
+			);
+
+			return res.status(200).json({
+				admin: updatedAdmin.joinRequests,
+				user: acceptUser.sentRequests,
+				team: updatedTeam.members,
+			});
+		}
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/add-member",
