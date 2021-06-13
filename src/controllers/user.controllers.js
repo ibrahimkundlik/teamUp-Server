@@ -168,9 +168,7 @@ export const addMember = async (req, res) => {
 				admin: updatedAdmin.joinRequests,
 				user: rejectUser.sentRequests,
 			});
-		}
-
-		if (type === "accept") {
+		} else if (type === "accept") {
 			const acceptUser = await User.findByIdAndUpdate(
 				userId,
 				{ $addToSet: { teams: teamId }, $pull: { sentRequests: teamId } },
@@ -179,14 +177,23 @@ export const addMember = async (req, res) => {
 
 			const updatedTeam = await Team.findByIdAndUpdate(
 				teamId,
-				{ $addToSet: { members: { _id: userId, level: "Member" } } },
+				{ $addToSet: { members: { _id: userId, level: "member" } } },
 				{ new: true, runValidators: true }
-			);
+			).populate({
+				path: "members._id",
+				model: "users",
+				select: "name",
+			});
 
 			return res.status(200).json({
 				admin: updatedAdmin.joinRequests,
 				user: acceptUser.sentRequests,
 				team: updatedTeam.members,
+			});
+		} else {
+			return res.status(400).json({
+				error: "/errors/add-member",
+				message: "Something went wrong. Invalid data sent.",
 			});
 		}
 	} catch (error) {
