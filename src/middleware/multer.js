@@ -18,7 +18,7 @@ const upload = multerUpload.array("attachments", 5);
 const uploadFunction = (req, res, next) => {
 	upload(req, res, (error) => {
 		if (error) {
-			return res.status(403).json({
+			return res.status(400).json({
 				error: "/errors/upload",
 				message: "Invalid Upload",
 				codeMessage: error.message,
