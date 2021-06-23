@@ -7,7 +7,14 @@ const taskSchema = mongoose.Schema(
 		type: reqString,
 		difficulty: reqString,
 		assigned: {
-			type: [mongoose.Schema.Types.ObjectId],
+			type: [
+				{
+					username: reqString,
+					userId: {
+						type: mongoose.Schema.Types.ObjectId,
+					},
+				},
+			],
 			required: true,
 		},
 		description: reqString,

@@ -3,14 +3,22 @@ import Team from "../models/team.models.js";
 
 export const getTeams = async (req, res) => {
 	try {
-		const { teams } = await User.findById(req.userId).populate({
-			path: "teams",
-			populate: {
-				path: "members._id",
-				model: "users",
-				select: "name",
-			},
-		});
+		const { teams } = await User.findById(req.userId)
+			.populate({
+				path: "teams",
+				populate: {
+					path: "members._id",
+					model: "users",
+					select: "name",
+				},
+			})
+			.populate({
+				path: "teams",
+				populate: {
+					path: "tasks",
+					model: "tasks",
+				},
+			});
 
 		const userTeams = teams.map((team) => team._id);
 
