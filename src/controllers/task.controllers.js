@@ -6,11 +6,6 @@ import Team from "../models/team.models.js";
 
 const unlinkFile = util.promisify(fs.unlink);
 
-export const getTasks = async (req, res) => {
-	try {
-	} catch (error) {}
-};
-
 export const createTask = async (req, res) => {
 	try {
 		//file upload to S3
@@ -25,7 +20,7 @@ export const createTask = async (req, res) => {
 		//getting other task data
 		const { name, type, difficulty, assigned, description, teamId } =
 			JSON.parse(req.body.data);
-		let newTask = await Task.create({
+		const newTask = await Task.create({
 			name,
 			type,
 			difficulty,
@@ -33,7 +28,6 @@ export const createTask = async (req, res) => {
 			description,
 			attachments,
 		});
-
 		const updatedTeam = await Team.findByIdAndUpdate(
 			teamId,
 			{ $push: { tasks: newTask._id } },

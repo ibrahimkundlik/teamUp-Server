@@ -5,7 +5,7 @@ const taskSchema = mongoose.Schema(
 	{
 		name: reqString,
 		type: reqString,
-		difficulty: reqString,
+		priority: reqString,
 		assigned: {
 			type: [
 				{
