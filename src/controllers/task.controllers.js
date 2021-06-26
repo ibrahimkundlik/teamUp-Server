@@ -10,6 +10,7 @@ export const createTask = async (req, res) => {
 	try {
 		//file upload to S3
 		const files = req.files;
+		console.log(files);
 		const S3Promises = files.map(async (file) => {
 			const S3Response = await uploadFileToS3(file);
 			await unlinkFile(file.path);
@@ -18,12 +19,13 @@ export const createTask = async (req, res) => {
 		const attachments = await Promise.all(S3Promises);
 
 		//getting other task data
-		const { name, type, difficulty, assigned, description, teamId } =
-			JSON.parse(req.body.data);
+		const { name, type, priority, assigned, description, teamId } = JSON.parse(
+			req.body.taskData
+		);
 		const newTask = await Task.create({
 			name,
 			type,
-			difficulty,
+			priority,
 			assigned,
 			description,
 			attachments,
@@ -34,7 +36,7 @@ export const createTask = async (req, res) => {
 			{ new: true, runValidators: true }
 		);
 
-		res.status(201).json({ task: newTask, team: updatedTeam });
+		res.status(201).json({ task: newTask, teamId: updatedTeam._id });
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/tasks",
