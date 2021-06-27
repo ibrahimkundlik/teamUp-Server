@@ -3,7 +3,7 @@ import { reqString, commentSchema } from "./utils.schemas.js";
 
 const taskSchema = mongoose.Schema(
 	{
-		name: reqString,
+		name: { ...reqString, trim: true },
 		type: reqString,
 		priority: reqString,
 		assigned: {
@@ -17,7 +17,7 @@ const taskSchema = mongoose.Schema(
 			],
 			required: true,
 		},
-		description: reqString,
+		description: { ...reqString, trim: true },
 		comments: {
 			type: [commentSchema],
 			default: [],

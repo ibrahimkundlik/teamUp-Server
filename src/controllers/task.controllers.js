@@ -10,7 +10,6 @@ export const createTask = async (req, res) => {
 	try {
 		//file upload to S3
 		const files = req.files;
-		console.log(files);
 		const S3Promises = files.map(async (file) => {
 			const S3Response = await uploadFileToS3(file);
 			await unlinkFile(file.path);
@@ -22,6 +21,14 @@ export const createTask = async (req, res) => {
 		const { name, type, priority, assigned, description, teamId } = JSON.parse(
 			req.body.taskData
 		);
+
+		if (name.trim().length === 0 || description.trim().length === 0) {
+			return res.status(400).json({
+				error: "/errors/tasks",
+				message: "Kindly check your task data. The provided data is empty.",
+			});
+		}
+
 		const newTask = await Task.create({
 			name,
 			type,
