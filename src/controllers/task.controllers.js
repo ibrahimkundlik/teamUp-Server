@@ -1,4 +1,4 @@
-import { uploadFileToS3 } from "../utils/aws-s3.js";
+import { uploadFileToS3, getSignedS3url } from "../utils/aws-s3.js";
 import fs from "fs";
 import util from "util";
 import Task from "../models/task.models.js";
@@ -56,4 +56,18 @@ export const createTask = async (req, res) => {
 export const updateTask = async (req, res) => {
 	try {
 	} catch (error) {}
+};
+
+export const getTaskImages = (req, res) => {
+	try {
+		const fileKey = req.params.key;
+		const readStream = getSignedS3url(fileKey);
+		readStream.pipe(res);
+	} catch (error) {
+		res.status(500).json({
+			error: "/errors/images",
+			message: "Something went wrong.",
+			codeMessage: error.message,
+		});
+	}
 };

@@ -24,3 +24,10 @@ export const uploadFileToS3 = (file) => {
 };
 
 //download file
+export const getSignedS3url = (fileKey) => {
+	const downloadParams = {
+		Key: fileKey,
+		Bucket: bucketName,
+	};
+	return s3.getObject(downloadParams).createReadStream();
+};

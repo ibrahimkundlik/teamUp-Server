@@ -14,8 +14,10 @@ export const getTeams = async (req, res) => {
 			})
 			.populate({
 				path: "teams",
+				options: { sort: { createdAt: -1 } },
 				populate: {
 					path: "tasks",
+					options: { sort: { createdAt: -1 } },
 					model: "tasks",
 				},
 			});
