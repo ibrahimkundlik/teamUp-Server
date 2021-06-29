@@ -15,19 +15,24 @@ const s3 = new S3({
 //uploads file
 export const uploadFileToS3 = (file) => {
 	const fileStream = fs.createReadStream(file.path);
+	const extension =
+		file.originalname.split(".")[file.originalname.split(".").length - 1];
 	const uploadParams = {
 		Bucket: bucketName,
 		Body: fileStream,
-		Key: file.filename,
+		Key: `${file.filename}.${extension}`,
+		ContentType: file.mimetype,
+		ContentDisposition: "attachment",
 	};
 	return s3.upload(uploadParams).promise();
 };
 
-//download file
-export const getSignedS3url = (fileKey) => {
+//view file
+export const getSingedUrl = (fileKey) => {
 	const downloadParams = {
 		Key: fileKey,
 		Bucket: bucketName,
+		Expires: 120,
 	};
-	return s3.getObject(downloadParams).createReadStream();
+	return s3.getSignedUrl("getObject", downloadParams);
 };

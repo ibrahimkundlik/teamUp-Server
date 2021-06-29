@@ -1,4 +1,4 @@
-import { uploadFileToS3, getSignedS3url } from "../utils/aws-s3.js";
+import { uploadFileToS3, getSingedUrl } from "../utils/aws-s3.js";
 import fs from "fs";
 import util from "util";
 import Task from "../models/task.models.js";
@@ -58,11 +58,14 @@ export const updateTask = async (req, res) => {
 	} catch (error) {}
 };
 
-export const getTaskImages = (req, res) => {
+export const getTaskImages = async (req, res) => {
 	try {
-		const fileKey = req.params.key;
-		const readStream = getSignedS3url(fileKey);
-		readStream.pipe(res);
+		const { attachments } = req.body;
+		const signedURLs = [];
+		attachments.map((key) => {
+			signedURLs.push(getSingedUrl(key));
+		});
+		res.status(200).json({ signedURLs });
 	} catch (error) {
 		res.status(500).json({
 			error: "/errors/images",

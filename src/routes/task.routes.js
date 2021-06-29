@@ -11,6 +11,6 @@ const router = express.Router();
 
 router.post("/create", [auth, uploadFunction], createTask);
 router.patch("/update", auth, updateTask);
-router.get("/images/:key", getTaskImages);
+router.post("/attachments", auth, getTaskImages);
 
 export default router;
