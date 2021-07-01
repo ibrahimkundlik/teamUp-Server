@@ -32,7 +32,7 @@ export const getSingedUrl = (fileKey) => {
 	const downloadParams = {
 		Key: fileKey,
 		Bucket: bucketName,
-		Expires: 120,
+		Expires: 300,
 	};
 	return s3.getSignedUrl("getObject", downloadParams);
 };

@@ -204,3 +204,74 @@ export const addMember = async (req, res) => {
 		});
 	}
 };
+
+export const addMemberByEmail = async (req, res) => {
+	try {
+		const { userMail, teamId } = req.body;
+		const adminId = req.userId;
+
+		let checkTeam = await Team.findById(teamId);
+		if (!checkTeam) {
+			return res.status(400).json({
+				error: "/errors/addMemberByEmail",
+				message: "Kindly check the teamId provided. No team found.",
+			});
+		}
+
+		const actualAdmin = checkTeam.members.find(
+			(member) => member.level === "admin"
+		);
+		if (actualAdmin._id.toString() !== adminId) {
+			return res.status(400).json({
+				error: "/errors/addMemberByEmail",
+				message:
+					"Only admins are allowed to add members on team level. Kindly ask your admin to add other members.",
+			});
+		}
+
+		let checkUser = await User.findOne({ email: userMail });
+		if (!checkUser) {
+			return res.status(400).json({
+				error: "/errors/addMemberByEmail",
+				message: "Kindly check the user email provided. No user found.",
+			});
+		}
+
+		const existingUser = checkTeam.members.find(
+			(member) => member._id.toString() === checkUser._id.toString()
+		);
+		if (existingUser) {
+			return res.status(400).json({
+				error: "/errors/addMemberByEmail",
+				message: `The provided email is already added in ${checkTeam.name}.`,
+			});
+		}
+
+		checkTeam.members.push({
+			_id: checkUser._id,
+			level: "member",
+		});
+		checkTeam = await checkTeam.save();
+		checkTeam = await checkTeam
+			.populate({
+				path: "members._id",
+				model: "users",
+				select: "name",
+			})
+			.execPopulate();
+
+		checkUser.teams.push(teamId);
+		checkUser = await checkUser.save();
+
+		return res.status(200).json({
+			user: checkUser,
+			updatedTeamMembers: checkTeam.members,
+		});
+	} catch (error) {
+		res.status(500).json({
+			error: "/errors/addMemberByEmail",
+			message: "Something went wrong.",
+			codeMessage: error.message,
+		});
+	}
+};
