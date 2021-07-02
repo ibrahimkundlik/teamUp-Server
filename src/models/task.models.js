@@ -9,10 +9,11 @@ const taskSchema = mongoose.Schema(
 		assigned: {
 			type: [
 				{
-					username: reqString,
-					userId: {
+					_id: {
 						type: mongoose.Schema.Types.ObjectId,
+						required: true,
 					},
+					username: reqString,
 				},
 			],
 			required: true,

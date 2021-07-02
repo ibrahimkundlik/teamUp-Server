@@ -55,7 +55,24 @@ export const createTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
 	try {
-	} catch (error) {}
+		const { type, priority, assigned, taskId } = req.body;
+		const updatedTask = await Task.findByIdAndUpdate(
+			taskId,
+			{
+				type,
+				priority,
+				$addToSet: { assigned },
+			},
+			{ new: true, runValidators: true }
+		);
+		res.status(200).json({ task: updatedTask });
+	} catch (error) {
+		res.status(500).json({
+			error: "/errors/tasks",
+			message: "Something went wrong.",
+			codeMessage: error.message,
+		});
+	}
 };
 
 export const getTaskImages = async (req, res) => {
@@ -68,7 +85,7 @@ export const getTaskImages = async (req, res) => {
 		res.status(200).json({ signedURLs });
 	} catch (error) {
 		res.status(500).json({
-			error: "/errors/images",
+			error: "/errors/attachments",
 			message: "Something went wrong.",
 			codeMessage: error.message,
 		});
