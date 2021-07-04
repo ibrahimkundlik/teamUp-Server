@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import userRoutes from "./routes/user.routes.js";
 import teamRoutes from "./routes/team.routes.js";
 import taskRoutes from "./routes/task.routes.js";
+import wakeUpDyno from "./utils/dyno.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use("/teams", teamRoutes);
 app.use("/tasks", taskRoutes);
 
 const PORT = process.env.PORT;
+const APP_URL = "https://teamup-server-ik.herokuapp.com/";
 
 mongoose
 	.connect(process.env.DATABASE_URL, {
@@ -24,7 +26,10 @@ mongoose
 		useUnifiedTopology: true,
 	})
 	.then(() =>
-		app.listen(PORT, () => console.log(`Server is up on port ${PORT}`))
+		app.listen(PORT, () => {
+			console.log(`Server is up on port ${PORT}`);
+			wakeUpDyno(APP_URL);
+		})
 	)
 	.catch((error) => console.log(error.message));
 
