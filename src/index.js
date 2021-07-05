@@ -16,6 +16,10 @@ app.use("/users", userRoutes);
 app.use("/teams", teamRoutes);
 app.use("/tasks", taskRoutes);
 
+app.get("/", (req, res) => {
+	res.send("teamUp server is running :)");
+});
+
 const PORT = process.env.PORT;
 const APP_URL = "https://teamup-server-ik.herokuapp.com/";
 
